@@ -51,7 +51,7 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
         </h1>
       </div>
       
-      <nav className="p-4">
+      <nav className="p-4 flex-1">
         <ul className="space-y-2">
           {navigationItems.map((item) => {
             const Icon = item.icon;
@@ -65,8 +65,8 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
                   className={cn(
                     "w-full justify-start text-left h-auto py-3 px-3",
                     isActive 
-                      ? "bg-blue-50 text-blue-700 hover:bg-blue-50" 
-                      : "text-slate-700 hover:bg-slate-100"
+                      ? "bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950" 
+                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
                   )}
                 >
                   <Icon className={cn("mr-3", item.color)} size={20} />
@@ -77,6 +77,14 @@ export function Sidebar({ activeTab, onTabChange }: SidebarProps) {
           })}
         </ul>
       </nav>
+      
+      {/* Theme Toggle at Bottom */}
+      <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-slate-600 dark:text-slate-400">Theme</span>
+          <ThemeToggle />
+        </div>
+      </div>
     </div>
   );
 }

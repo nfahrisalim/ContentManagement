@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { BlogModal } from "@/components/modals/blog-modal";
 import { useBlogs, useDeleteBlog } from "@/hooks/use-blogs";
 import { formatDistanceToNow } from "date-fns";
 import { Plus, Search, Edit, Eye, Trash2 } from "lucide-react";
@@ -16,8 +16,7 @@ import type { Blog } from "@shared/schema";
 export function BlogManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("date-desc");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
+  const [, setLocation] = useLocation();
   
   const { toast } = useToast();
   const { data: blogs, isLoading } = useBlogs();
@@ -47,8 +46,7 @@ export function BlogManagement() {
   }, [blogs, searchTerm, sortBy]);
 
   const handleEdit = (blog: Blog) => {
-    setEditingBlog(blog);
-    setIsModalOpen(true);
+    setLocation(`/blog/edit/${blog.id}`);
   };
 
   const handleDelete = async (blog: Blog) => {
@@ -68,11 +66,6 @@ export function BlogManagement() {
         });
       }
     }
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-    setEditingBlog(null);
   };
 
   if (isLoading) {
@@ -113,7 +106,7 @@ export function BlogManagement() {
           <p className="text-slate-600 mt-1">Create and manage your blog posts</p>
         </div>
         <Button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => setLocation("/blog/new")}
           className="bg-blue-500 hover:bg-blue-600"
         >
           <Plus className="mr-2" size={16} />
@@ -184,7 +177,7 @@ export function BlogManagement() {
           {filteredAndSortedBlogs.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-slate-500 mb-4">No blog posts found</p>
-              <Button onClick={() => setIsModalOpen(true)}>
+              <Button onClick={() => setLocation("/blog/new")}>
                 <Plus className="mr-2" size={16} />
                 Create your first blog post
               </Button>
@@ -249,12 +242,6 @@ export function BlogManagement() {
           )}
         </CardContent>
       </Card>
-
-      <BlogModal
-        isOpen={isModalOpen}
-        onClose={handleModalClose}
-        blog={editingBlog}
-      />
     </div>
   );
 }

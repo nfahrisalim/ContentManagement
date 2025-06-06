@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { ProjectModal } from "@/components/modals/project-modal";
 import { useProjects, useDeleteProject } from "@/hooks/use-projects";
 import { formatDistanceToNow } from "date-fns";
 import { Plus, Search, Edit, Eye, Trash2, ExternalLink, Github } from "lucide-react";
@@ -16,8 +16,7 @@ import type { Project } from "@shared/schema";
 export function ProjectManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("date-desc");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [, setLocation] = useLocation();
   
   const { toast } = useToast();
   const { data: projects, isLoading } = useProjects();
