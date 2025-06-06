@@ -46,8 +46,7 @@ export function ProjectManagement() {
   }, [projects, searchTerm, sortBy]);
 
   const handleEdit = (project: Project) => {
-    setEditingProject(project);
-    setIsModalOpen(true);
+    setLocation(`/project/edit/${project.id}`);
   };
 
   const handleDelete = async (project: Project) => {
@@ -67,11 +66,6 @@ export function ProjectManagement() {
         });
       }
     }
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-    setEditingProject(null);
   };
 
   if (isLoading) {
@@ -113,7 +107,7 @@ export function ProjectManagement() {
           <p className="text-slate-600 mt-1">Showcase your projects and work</p>
         </div>
         <Button 
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => setLocation("/project/new")}
           className="bg-green-500 hover:bg-green-600"
         >
           <Plus className="mr-2" size={16} />
@@ -180,7 +174,7 @@ export function ProjectManagement() {
         <Card>
           <CardContent className="text-center py-12">
             <p className="text-slate-500 mb-4">No projects found</p>
-            <Button onClick={() => setIsModalOpen(true)}>
+            <Button onClick={() => setLocation("/project/new")}>
               <Plus className="mr-2" size={16} />
               Create your first project
             </Button>
@@ -269,12 +263,6 @@ export function ProjectManagement() {
           ))}
         </div>
       )}
-
-      <ProjectModal
-        isOpen={isModalOpen}
-        onClose={handleModalClose}
-        project={editingProject}
-      />
     </div>
   );
 }
