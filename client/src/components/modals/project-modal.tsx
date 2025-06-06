@@ -131,11 +131,14 @@ export function ProjectModal({ isOpen, onClose, project }: ProjectModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto" aria-describedby="project-modal-description">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Edit Project" : "Add New Project"}
           </DialogTitle>
+          <p id="project-modal-description" className="text-sm text-slate-600">
+            {isEditing ? "Update your project details, links, and description" : "Create a new project with details, links, and markdown description"}
+          </p>
         </DialogHeader>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
