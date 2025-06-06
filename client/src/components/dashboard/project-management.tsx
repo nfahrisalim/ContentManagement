@@ -122,37 +122,53 @@ export function ProjectManagement() {
         </Button>
       </div>
 
-      {/* Filters */}
-      <Card className="mb-6">
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+      {/* Enhanced Filters */}
+      <Card className="mb-6 shadow-sm border border-slate-200">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-slate-800">Search & Filter</h3>
+            <div className="text-sm text-slate-500">
+              {filteredAndSortedProjects.length} {filteredAndSortedProjects.length === 1 ? 'project' : 'projects'} found
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2">
               <Label className="block text-sm font-medium text-slate-700 mb-2">
-                Search by Title
+                Search Projects
               </Label>
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
-                  placeholder="Search projects..."
+                  placeholder="Search by title or description..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-slate-300 focus:border-green-500 focus:ring-green-500"
                 />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    ×
+                  </button>
+                )}
               </div>
             </div>
             <div>
               <Label className="block text-sm font-medium text-slate-700 mb-2">
-                Sort By
+                Sort Projects
               </Label>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-300 focus:border-green-500 focus:ring-green-500">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="date-desc">Newest First</SelectItem>
-                  <SelectItem value="date-asc">Oldest First</SelectItem>
-                  <SelectItem value="title-asc">Title A-Z</SelectItem>
-                  <SelectItem value="title-desc">Title Z-A</SelectItem>
+                  <SelectItem value="date-desc">📅 Newest First</SelectItem>
+                  <SelectItem value="date-asc">📅 Oldest First</SelectItem>
+                  <SelectItem value="title-asc">🔤 Title A → Z</SelectItem>
+                  <SelectItem value="title-desc">🔤 Title Z → A</SelectItem>
                 </SelectContent>
               </Select>
             </div>

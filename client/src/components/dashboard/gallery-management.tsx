@@ -199,22 +199,35 @@ export function GalleryManagement() {
         </Dialog>
       </div>
 
-      {/* Gallery Filters */}
-      <Card className="mb-6">
-        <CardContent className="p-6">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-slate-800">
-              Image Gallery ({sortedImages.length} images)
-            </h3>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="date-desc">Newest First</SelectItem>
-                <SelectItem value="date-asc">Oldest First</SelectItem>
-              </SelectContent>
-            </Select>
+      {/* Enhanced Gallery Filters */}
+      <Card className="mb-6 shadow-sm border border-slate-200">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-slate-800">Image Gallery</h3>
+            <div className="text-sm text-slate-500">
+              {sortedImages.length} {sortedImages.length === 1 ? 'image' : 'images'} uploaded
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="flex items-end gap-4">
+            <div className="flex-1">
+              <Label className="block text-sm font-medium text-slate-700 mb-2">
+                Sort Images
+              </Label>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="border-slate-300 focus:border-purple-500 focus:ring-purple-500">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="date-desc">📅 Newest First</SelectItem>
+                  <SelectItem value="date-asc">📅 Oldest First</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="text-xs text-slate-500 pb-2">
+              Hover over images to access actions
+            </div>
           </div>
         </CardContent>
       </Card>

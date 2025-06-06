@@ -77,8 +77,13 @@ export class MemStorage implements IStorage {
     const id = (this.currentId++).toString();
     const now = new Date();
     const newBlog: Blog = {
-      ...blog,
       id,
+      title: blog.title,
+      content: blog.content,
+      status: blog.status || "draft",
+      excerpt: blog.excerpt || null,
+      coverImageUrl: blog.coverImageUrl || null,
+      publishedAt: blog.publishedAt || null,
       createdAt: now,
       updatedAt: now,
     };
@@ -120,8 +125,16 @@ export class MemStorage implements IStorage {
     const id = (this.currentId++).toString();
     const now = new Date();
     const newProject: Project = {
-      ...project,
       id,
+      title: project.title,
+      content: project.content,
+      projectLink: project.projectLink,
+      githubLink: project.githubLink,
+      coverImageUrl: project.coverImageUrl,
+      status: project.status || "draft",
+      publishedAt: project.publishedAt || null,
+      documentationLink: project.documentationLink || null,
+      isGroup: project.isGroup || false,
       createdAt: now,
       updatedAt: now,
     };

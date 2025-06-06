@@ -117,11 +117,14 @@ export function BlogModal({ isOpen, onClose, blog }: BlogModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto" aria-describedby="blog-modal-description">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Edit Blog Post" : "Add New Blog Post"}
           </DialogTitle>
+          <p id="blog-modal-description" className="text-sm text-slate-600">
+            {isEditing ? "Update your blog post details and content" : "Create a new blog post with title, content, and publishing options"}
+          </p>
         </DialogHeader>
         
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
