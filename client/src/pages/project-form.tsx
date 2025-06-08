@@ -62,6 +62,7 @@ export default function ProjectForm() {
   const contentValue = watch("content", "");
   const statusValue = watch("status", "draft");
   const isGroupValue = watch("isGroup", false);
+  const coverImageUrl = watch("coverImageUrl");
 
   useEffect(() => {
     if (isEditing && project) {
@@ -277,6 +278,19 @@ export default function ProjectForm() {
                   />
                   {errors.coverImageUrl && (
                     <p className="text-destructive text-sm mt-1">{errors.coverImageUrl.message}</p>
+                  )}
+                  {/* 👇 Cover Image Preview */}
+                  {coverImageUrl && (
+                    <div className="mt-2">
+                      <img
+                        src={coverImageUrl}
+                        alt="Cover Preview"
+                        className="rounded border w-full max-w-xs object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
+                    </div>
                   )}
                 </div>
               </div>

@@ -55,6 +55,16 @@ export default function BlogForm() {
 
   const contentValue = watch("content", "");
   const statusValue = watch("status", "draft");
+  const coverImageUrlValue = watch("coverImageUrl");
+
+  const isValidImageUrl = (url: string) => {
+    try {
+      const parsedUrl = new URL(url);
+      return /\.(jpeg|jpg|gif|png|webp|svg)$/.test(parsedUrl.pathname);
+    } catch {
+      return false;
+    }
+  };
 
   useEffect(() => {
     if (isEditing && blog) {
@@ -92,12 +102,12 @@ export default function BlogForm() {
           description: "Blog post created successfully",
         });
       }
-      
+
       setLocation("/");
     } catch (error) {
       toast({
         title: "Error",
-        description: `Failed to ${isEditing ? 'update' : 'create'} blog post`,
+        description: `Failed to ${isEditing ? "update" : "create"} blog post`,
         variant: "destructive",
       });
     }
@@ -229,6 +239,16 @@ export default function BlogForm() {
                 />
                 {errors.coverImageUrl && (
                   <p className="text-destructive text-sm mt-1">{errors.coverImageUrl.message}</p>
+                )}
+
+                {/* Image Preview */}
+                {coverImageUrlValue && isValidImageUrl(coverImageUrlValue) && (
+                  <img
+                    src={coverImageUrlValue}
+                    alt="Cover Preview"
+                    className="mt-4 max-h-64 rounded-md border shadow"
+                    onError={(e) => (e.currentTarget.style.display = "none")}
+                  />
                 )}
               </div>
             </CardContent>
