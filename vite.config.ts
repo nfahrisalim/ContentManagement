@@ -4,28 +4,26 @@ import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 export default defineConfig({
+  root: path.resolve(__dirname, "client"),  // set root ke client folder
   plugins: [
     react(),
     runtimeErrorOverlay(),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
       ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
+          (await import("@replit/vite-plugin-cartographer")).cartographer(),
         ]
       : []),
   ],
   resolve: {
     alias: {
-      "@": path.resolve(import.meta.dirname, "client", "src"),
-      "@shared": path.resolve(import.meta.dirname, "shared"),
-      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
+      "@": path.resolve(__dirname, "client/src"),   // alias ke src folder di client
+      "@shared": path.resolve(__dirname, "shared"),
+      "@assets": path.resolve(__dirname, "attached_assets"),
     },
   },
-  root: path.resolve(import.meta.dirname, "client"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: path.resolve(__dirname, "dist/public"),  // hasil build di luar client, di dist/public
     emptyOutDir: true,
   },
   server: {
