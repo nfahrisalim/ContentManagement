@@ -8,10 +8,14 @@ export interface ApiResponse<T> {
   errors?: any[];
 }
 
+// Helper untuk mengambil base URL dari environment variable
+const API_BASE_URL = import.meta.env.VITE_API_URL || "";
+const getApiUrl = (path: string) => `${API_BASE_URL}${path}`;
+
 // Blog API functions
 export const blogApi = {
   getAll: async (status?: string): Promise<Blog[]> => {
-    const url = status ? `/api/blogs?status=${status}` : '/api/blogs';
+    const url = status ? getApiUrl(`/api/blogs?status=${status}`) : getApiUrl('/api/blogs');
     const response = await fetch(url);
     const result: ApiResponse<Blog[]> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to fetch blogs');
@@ -19,7 +23,7 @@ export const blogApi = {
   },
 
   getById: async (id: string): Promise<Blog> => {
-    const response = await fetch(`/api/blogs/${id}`);
+    const response = await fetch(getApiUrl(`/api/blogs/${id}`));
     const result: ApiResponse<Blog> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to fetch blog');
     if (!result.data) throw new Error('Blog not found');
@@ -27,7 +31,7 @@ export const blogApi = {
   },
 
   create: async (blog: InsertBlog): Promise<Blog> => {
-    const response = await apiRequest('POST', '/api/blogs', blog);
+    const response = await apiRequest('POST', getApiUrl('/api/blogs'), blog);
     const result: ApiResponse<Blog> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to create blog');
     if (!result.data) throw new Error('No data returned');
@@ -35,7 +39,7 @@ export const blogApi = {
   },
 
   update: async (id: string, blog: Partial<InsertBlog>): Promise<Blog> => {
-    const response = await apiRequest('PUT', `/api/blogs/${id}`, blog);
+    const response = await apiRequest('PUT', getApiUrl(`/api/blogs/${id}`), blog);
     const result: ApiResponse<Blog> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to update blog');
     if (!result.data) throw new Error('No data returned');
@@ -43,7 +47,7 @@ export const blogApi = {
   },
 
   delete: async (id: string): Promise<void> => {
-    const response = await apiRequest('DELETE', `/api/blogs/${id}`);
+    const response = await apiRequest('DELETE', getApiUrl(`/api/blogs/${id}`));
     const result: ApiResponse<void> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to delete blog');
   },
@@ -52,7 +56,7 @@ export const blogApi = {
 // Project API functions
 export const projectApi = {
   getAll: async (status?: string): Promise<Project[]> => {
-    const url = status ? `/api/projects?status=${status}` : '/api/projects';
+    const url = status ? getApiUrl(`/api/projects?status=${status}`) : getApiUrl('/api/projects');
     const response = await fetch(url);
     const result: ApiResponse<Project[]> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to fetch projects');
@@ -60,7 +64,7 @@ export const projectApi = {
   },
 
   getById: async (id: string): Promise<Project> => {
-    const response = await fetch(`/api/projects/${id}`);
+    const response = await fetch(getApiUrl(`/api/projects/${id}`));
     const result: ApiResponse<Project> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to fetch project');
     if (!result.data) throw new Error('Project not found');
@@ -68,7 +72,7 @@ export const projectApi = {
   },
 
   create: async (project: InsertProject): Promise<Project> => {
-    const response = await apiRequest('POST', '/api/projects', project);
+    const response = await apiRequest('POST', getApiUrl('/api/projects'), project);
     const result: ApiResponse<Project> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to create project');
     if (!result.data) throw new Error('No data returned');
@@ -76,7 +80,7 @@ export const projectApi = {
   },
 
   update: async (id: string, project: Partial<InsertProject>): Promise<Project> => {
-    const response = await apiRequest('PUT', `/api/projects/${id}`, project);
+    const response = await apiRequest('PUT', getApiUrl(`/api/projects/${id}`), project);
     const result: ApiResponse<Project> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to update project');
     if (!result.data) throw new Error('No data returned');
@@ -84,7 +88,7 @@ export const projectApi = {
   },
 
   delete: async (id: string): Promise<void> => {
-    const response = await apiRequest('DELETE', `/api/projects/${id}`);
+    const response = await apiRequest('DELETE', getApiUrl(`/api/projects/${id}`));
     const result: ApiResponse<void> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to delete project');
   },
@@ -93,14 +97,14 @@ export const projectApi = {
 // Gallery API functions
 export const galleryApi = {
   getAll: async (): Promise<GalleryImage[]> => {
-    const response = await fetch('/api/gallery');
+    const response = await fetch(getApiUrl('/api/gallery'));
     const result: ApiResponse<GalleryImage[]> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to fetch gallery images');
     return result.data || [];
   },
 
   create: async (image: InsertGalleryImage): Promise<GalleryImage> => {
-    const response = await apiRequest('POST', '/api/gallery', image);
+    const response = await apiRequest('POST', getApiUrl('/api/gallery'), image);
     const result: ApiResponse<GalleryImage> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to upload image');
     if (!result.data) throw new Error('No data returned');
@@ -108,7 +112,7 @@ export const galleryApi = {
   },
 
   delete: async (id: string): Promise<void> => {
-    const response = await apiRequest('DELETE', `/api/gallery/${id}`);
+    const response = await apiRequest('DELETE', getApiUrl(`/api/gallery/${id}`));
     const result: ApiResponse<void> = await response.json();
     if (!result.success) throw new Error(result.message || 'Failed to delete image');
   },
@@ -117,7 +121,7 @@ export const galleryApi = {
 // Health API function
 export const healthApi = {
   check: async (): Promise<{ status: string; timestamp: string; message: string }> => {
-    const response = await fetch('/api/health');
+    const response = await fetch(getApiUrl('/api/health'));
     const result = await response.json();
     if (!result.success) throw new Error(result.message || 'API is not healthy');
     return {

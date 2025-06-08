@@ -50,7 +50,7 @@ export function ProjectManagement() {
   };
 
   const handleDelete = async (project: Project) => {
-    if (window.confirm(`Are you sure you want to delete "${project.title}"?`)) {
+    if (window.confirm(`Are you sure you want to delete \"${project.title}\"?`)) {
       try {
         await deleteProjectMutation.mutateAsync(project.id);
         toast({
@@ -100,11 +100,11 @@ export function ProjectManagement() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-8 dark:bg-slate-900 min-h-screen">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-slate-800">Project Management</h2>
-          <p className="text-slate-600 mt-1">Showcase your projects and work</p>
+          <h2 className="text-3xl font-bold text-slate-800 dark:text-white">Project Management</h2>
+          <p className="text-slate-600 dark:text-slate-300 mt-1">Showcase your projects and work</p>
         </div>
         <Button 
           onClick={() => setLocation("/project/new")}
@@ -115,12 +115,11 @@ export function ProjectManagement() {
         </Button>
       </div>
 
-      {/* Enhanced Filters */}
-      <Card className="mb-6 shadow-sm border border-slate-200">
+      <Card className="mb-6 border border-slate-200 dark:border-slate-700">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-slate-800">Search & Filter</h3>
-            <div className="text-sm text-slate-500">
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200">Search & Filter</h3>
+            <div className="text-sm text-slate-500 dark:text-slate-400">
               {filteredAndSortedProjects.length} {filteredAndSortedProjects.length === 1 ? 'project' : 'projects'} found
             </div>
           </div>
@@ -128,7 +127,7 @@ export function ProjectManagement() {
         <CardContent className="pt-0">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2">
-              <Label className="block text-sm font-medium text-slate-700 mb-2">
+              <Label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
                 Search Projects
               </Label>
               <div className="relative">
@@ -137,24 +136,16 @@ export function ProjectManagement() {
                   placeholder="Search by title or description..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 border-slate-300 focus:border-green-500 focus:ring-green-500"
+                  className="pl-10 border-slate-300 dark:border-slate-600 focus:border-green-500 focus:ring-green-500"
                 />
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                  >
-                    ×
-                  </button>
-                )}
               </div>
             </div>
             <div>
-              <Label className="block text-sm font-medium text-slate-700 mb-2">
+              <Label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">
                 Sort Projects
               </Label>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="border-slate-300 focus:border-green-500 focus:ring-green-500">
+                <SelectTrigger className="border-slate-300 dark:border-slate-600 focus:border-green-500 focus:ring-green-500">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -169,21 +160,17 @@ export function ProjectManagement() {
         </CardContent>
       </Card>
 
-      {/* Project Grid */}
       {filteredAndSortedProjects.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
-            <p className="text-slate-500 mb-4">No projects found</p>
-            <Button onClick={() => setLocation("/project/new")}>
-              <Plus className="mr-2" size={16} />
-              Create your first project
-            </Button>
+            <p className="text-slate-500 dark:text-slate-400 mb-4">No projects found</p>
+            <Button onClick={() => setLocation("/project/new")}>Create your first project</Button>
           </CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAndSortedProjects.map((project) => (
-            <Card key={project.id} className="overflow-hidden hover:shadow-md transition-shadow">
+            <Card key={project.id} className="overflow-hidden hover:shadow-md transition-shadow dark:bg-slate-800">
               {project.coverImageUrl && (
                 <img 
                   src={project.coverImageUrl} 
@@ -193,7 +180,7 @@ export function ProjectManagement() {
               )}
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-3">
-                  <h3 className="text-lg font-semibold text-slate-800 line-clamp-1">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-white line-clamp-1">
                     {project.title}
                   </h3>
                   <Badge 
@@ -203,7 +190,7 @@ export function ProjectManagement() {
                     {project.status}
                   </Badge>
                 </div>
-                <p className="text-slate-600 text-sm mb-4 line-clamp-3">
+                <p className="text-slate-600 dark:text-slate-300 text-sm mb-4 line-clamp-3">
                   {project.content.replace(/[#*`]/g, '').substring(0, 150)}...
                 </p>
                 <div className="flex items-center justify-between">
@@ -214,8 +201,7 @@ export function ProjectManagement() {
                       rel="noopener noreferrer"
                       className="text-blue-500 hover:text-blue-600 text-sm flex items-center"
                     >
-                      <ExternalLink className="mr-1" size={12} />
-                      Live Demo
+                      <ExternalLink className="mr-1" size={12} /> Live Demo
                     </a>
                     <a 
                       href={project.githubLink}
@@ -223,8 +209,7 @@ export function ProjectManagement() {
                       rel="noopener noreferrer"
                       className="text-slate-500 hover:text-slate-600 text-sm flex items-center"
                     >
-                      <Github className="mr-1" size={12} />
-                      Code
+                      <Github className="mr-1" size={12} /> Code
                     </a>
                   </div>
                   <div className="flex items-center gap-1">
@@ -232,7 +217,7 @@ export function ProjectManagement() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleEdit(project)}
-                      className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50"
+                      className="p-1.5 text-slate-400 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900"
                     >
                       <Edit size={12} />
                     </Button>
@@ -240,7 +225,7 @@ export function ProjectManagement() {
                       variant="ghost"
                       size="sm"
                       onClick={() => toast({ title: "Preview", description: "Preview functionality coming soon" })}
-                      className="p-1.5 text-slate-400 hover:text-green-500 hover:bg-green-50"
+                      className="p-1.5 text-slate-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900"
                     >
                       <Eye size={12} />
                     </Button>
@@ -248,14 +233,14 @@ export function ProjectManagement() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleDelete(project)}
-                      className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50"
+                      className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900"
                       disabled={deleteProjectMutation.isPending}
                     >
                       <Trash2 size={12} />
                     </Button>
                   </div>
                 </div>
-                <div className="text-xs text-slate-400 mt-2">
+                <div className="text-xs text-slate-400 dark:text-slate-500 mt-2">
                   {formatDistanceToNow(new Date(project.createdAt), { addSuffix: true })}
                 </div>
               </CardContent>

@@ -17,19 +17,41 @@ import {
 } from "lucide-react";
 
 const endpoints = [
-  {
-    category: "Blog Endpoints",
+    {
+    category: "Blog Endpoints (DONT USE)",
     color: "text-blue-500",
     icon: BookOpen,
+    deprecated: true,  // <-- ini penanda deprecated
+    note: "Sebaiknya jangan dipakai, endpoint ini akan segera diganti",
     items: [
-      { method: "GET", path: "/api/blogs", description: "Get all blog posts", color: "bg-green-100 text-green-800" },
-      { method: "POST", path: "/api/blogs", description: "Create new blog post", color: "bg-blue-100 text-blue-800" },
-      { method: "PUT", path: "/api/blogs/{id}", description: "Update blog post", color: "bg-yellow-100 text-yellow-800" },
-      { method: "DELETE", path: "/api/blogs/{id}", description: "Delete blog post", color: "bg-red-100 text-red-800" },
+      { 
+        method: "GET", 
+        path: "/api/blogs?status=published|draft", 
+        description: "Get all blog posts filtered by status (published or draft)", 
+        color: "bg-green-100 text-green-800" 
+      },
+      { 
+        method: "POST", 
+        path: "/api/blogs", 
+        description: "Create new blog post", 
+        color: "bg-blue-100 text-blue-800" 
+      },
+      { 
+        method: "PUT", 
+        path: "/api/blogs/{id}", 
+        description: "Update blog post by ID", 
+        color: "bg-yellow-100 text-yellow-800" 
+      },
+      { 
+        method: "DELETE", 
+        path: "/api/blogs/{id}", 
+        description: "Delete blog post by ID", 
+        color: "bg-red-100 text-red-800" 
+      },
     ]
   },
   {
-    category: "Project Endpoints",
+    category: "Project Endpoints (DONT USE)",
     color: "text-green-500",
     icon: FolderOpen,
     items: [
@@ -81,7 +103,7 @@ export function ApiStatus() {
     <div className="p-8">
       <div className="mb-8">
         <h2 className="text-3xl font-bold text-slate-800">API Status & Endpoints</h2>
-        <p className="text-slate-600 mt-1">Monitor your API health and access endpoints</p>
+        <p className="text-slate-600 mt-1">Please refer to documentation rather than endpoint here (Link is below at quick links)</p>
       </div>
 
       {/* API Health Status */}
@@ -120,7 +142,11 @@ export function ApiStatus() {
           </div>
           {healthStatus && (
             <div className="mt-3 text-sm text-slate-600">
-              Status: {healthStatus.status} | Message: {healthStatus.message}
+              {healthStatus?.status && healthStatus?.message && (
+                <div className="mt-3 text-sm text-slate-600">
+                  Status: {healthStatus.status} | Message: {healthStatus.message}
+                </div>
+              )}
             </div>
           )}
         </CardContent>
@@ -179,7 +205,7 @@ export function ApiStatus() {
         <CardContent>
           <div className="flex gap-4">
             <a 
-              href="https://bunbackendv2-production.up.railway.app/api-docs" 
+              href="https://bunbackendv2-production.up.railway.app/doc" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm transition-colors"
@@ -189,7 +215,7 @@ export function ApiStatus() {
               <ExternalLink className="ml-2" size={14} />
             </a>
             <a 
-              href="https://bunbackendv2-production.up.railway.app/health" 
+              href="https://bunbackendv2-production.up.railway.app/api/health" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm transition-colors"

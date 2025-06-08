@@ -16,21 +16,32 @@ import { z } from "zod";
 import type { GalleryImage } from "@shared/schema";
 
 const uploadSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  url: z.string().url("Must be a valid URL"),
+  image: z
+    .any()
+    .refine((files) => files instanceof FileList && files.length > 0, {
+      message: "Image file is required",
+    })
+    .refine((files) => files instanceof FileList && files[0]?.type.startsWith("image/"), {
+      message: "Only image files are allowed",
+    }),
 });
 
 type UploadFormData = z.infer<typeof uploadSchema>;
 
 export function GalleryManagement() {
+  // State untuk sorting dan dialog upload
   const [sortBy, setSortBy] = useState("date-desc");
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  
+
+  // Toast notifications
   const { toast } = useToast();
+
+  // Hook data gallery, loading status, dan mutation create/delete
   const { data: images, isLoading } = useGallery();
   const createImageMutation = useCreateGalleryImage();
   const deleteImageMutation = useDeleteGalleryImage();
 
+  // Sorting images berdasarkan state sortBy
   const sortedImages = useMemo(() => {
     if (!images) return [];
 
@@ -46,6 +57,7 @@ export function GalleryManagement() {
     });
   }, [images, sortBy]);
 
+  // React-hook-form setup dengan validasi zod
   const {
     register,
     handleSubmit,
@@ -55,24 +67,21 @@ export function GalleryManagement() {
     resolver: zodResolver(uploadSchema),
   });
 
+  // Fungsi submit upload image
   const onSubmit = async (data: UploadFormData) => {
+    const file = data.image[0];  // Ambil file dari FileList
+
     try {
-      await createImageMutation.mutateAsync(data);
-      toast({
-        title: "Image uploaded",
-        description: "Image uploaded successfully",
-      });
+      await createImageMutation.mutateAsync(file);
+      toast({ title: "Image uploaded", description: "Image uploaded successfully" });
       reset();
       setIsUploadOpen(false);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to upload image",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Failed to upload image", variant: "destructive" });
     }
   };
 
+  // Copy link ke clipboard
   const handleCopyLink = async (url: string) => {
     try {
       await navigator.clipboard.writeText(url);
@@ -89,10 +98,13 @@ export function GalleryManagement() {
     }
   };
 
+  // Hapus image dengan konfirmasi
   const handleDelete = async (image: GalleryImage) => {
-    if (window.confirm(`Are you sure you want to delete "${image.name}"?`)) {
+    const filename = image.filename ?? image.name ?? image.id;
+
+    if (window.confirm(`Are you sure you want to delete "${filename}"?`)) {
       try {
-        await deleteImageMutation.mutateAsync(image.id);
+        await deleteImageMutation.mutateAsync(filename);
         toast({
           title: "Image deleted",
           description: "Image deleted successfully",
@@ -108,6 +120,7 @@ export function GalleryManagement() {
     }
   };
 
+  // Loading skeleton saat data belum datang
   if (isLoading) {
     return (
       <div className="p-8">
@@ -137,10 +150,11 @@ export function GalleryManagement() {
 
   return (
     <div className="p-8">
+      {/* Header & Upload Dialog */}
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-slate-800">Gallery Management</h2>
-          <p className="text-slate-600 mt-1">Upload and manage your images</p>
+          <h2 className="text-3xl font-bold text-foreground">Gallery Management</h2>
+          <p className="text-muted-foreground mt-1">Upload and manage your images</p>
         </div>
         <Dialog open={isUploadOpen} onOpenChange={setIsUploadOpen}>
           <DialogTrigger asChild>
@@ -153,41 +167,33 @@ export function GalleryManagement() {
             <DialogHeader>
               <DialogTitle>Upload New Image</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" encType="multipart/form-data">
               <div>
-                <Label htmlFor="name">Image Name</Label>
+                <Label htmlFor="image" className="block mb-2 text-sm font-medium text-slate-700">
+                  Upload Image File
+                </Label>
                 <Input
-                  id="name"
-                  {...register("name")}
-                  placeholder="Enter image name..."
-                  className={errors.name ? "border-red-500" : ""}
+                  id="image"
+                  type="file"
+                  accept="image/*"
+                  {...register("image")}
+                  className={`file:mr-4 file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-purple-50 file:text-purple-700
+                    hover:file:bg-purple-100 
+                    ${errors.image ? "border-red-500" : ""}`}
                 />
-                {errors.name && (
-                  <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                {errors.image?.message && (
+                  <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>
                 )}
               </div>
-              <div>
-                <Label htmlFor="url">Image URL</Label>
-                <Input
-                  id="url"
-                  {...register("url")}
-                  placeholder="https://example.com/image.jpg"
-                  className={errors.url ? "border-red-500" : ""}
-                />
-                {errors.url && (
-                  <p className="text-red-500 text-sm mt-1">{errors.url.message}</p>
-                )}
-              </div>
-              <div className="flex justify-end gap-3">
-                <Button 
-                  type="button" 
-                  variant="outline"
-                  onClick={() => setIsUploadOpen(false)}
-                >
+              <div className="flex justify-end gap-3 pt-2">
+                <Button type="button" variant="outline" onClick={() => setIsUploadOpen(false)}>
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={createImageMutation.isPending}
                   className="bg-purple-500 hover:bg-purple-600"
                 >
@@ -199,7 +205,7 @@ export function GalleryManagement() {
         </Dialog>
       </div>
 
-      {/* Enhanced Gallery Filters */}
+      {/* Sorting Controls */}
       <Card className="mb-6 shadow-sm border border-slate-200">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
@@ -232,57 +238,56 @@ export function GalleryManagement() {
         </CardContent>
       </Card>
 
-      {/* Gallery Grid */}
+      {/* Gallery Grid or Empty State */}
       {sortedImages.length === 0 ? (
-        <Card>
-          <CardContent className="text-center py-12">
-            <p className="text-slate-500 mb-4">No images uploaded yet</p>
-            <Button onClick={() => setIsUploadOpen(true)}>
+        <Card className="text-center py-12">
+          <CardContent className="flex flex-col items-center gap-4">
+            <img src="/empty-gallery.svg" alt="Empty gallery" className="h-28 opacity-70" />
+            <p className="text-slate-500 text-sm">Looks like your gallery is empty.</p>
+            <Button onClick={() => setIsUploadOpen(true)} className="bg-purple-500 hover:bg-purple-600">
               <Upload className="mr-2" size={16} />
-              Upload your first image
+              Upload Image
             </Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {sortedImages.map((image) => (
-            <Card key={image.id} className="group relative overflow-hidden hover:shadow-md transition-shadow">
+            <Card key={image.id} className="group relative overflow-hidden rounded-xl hover:ring-1 hover:ring-purple-300/50 transition-all">
               <div className="relative">
-                <img 
-                  src={image.url} 
+                <img
+                  src={image.url}
                   alt={image.name}
-                  className="w-full h-32 object-cover"
+                  className="w-full h-36 object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = "https://via.placeholder.com/200x128?text=Image+Not+Found";
                   }}
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <div className="flex items-center gap-2">
+                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                  <div className="flex gap-2">
                     <Button
-                      size="sm"
+                      size="icon"
                       variant="secondary"
                       onClick={() => handleCopyLink(image.url)}
-                      className="p-2"
+                      className="rounded-full"
                     >
-                      <Link2 size={14} />
+                      <Link2 size={16} />
                     </Button>
                     <Button
-                      size="sm"
+                      size="icon"
                       variant="destructive"
                       onClick={() => handleDelete(image)}
-                      className="p-2"
+                      className="rounded-full"
                       disabled={deleteImageMutation.isPending}
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={16} />
                     </Button>
                   </div>
                 </div>
               </div>
               <CardContent className="p-3">
-                <p className="text-xs text-slate-500 truncate font-medium">
-                  {image.name}
-                </p>
+                <p className="text-sm font-medium text-slate-700 truncate">{image.name}</p>
                 <p className="text-xs text-slate-400">
                   {formatDistanceToNow(new Date(image.uploadDate), { addSuffix: true })}
                 </p>
