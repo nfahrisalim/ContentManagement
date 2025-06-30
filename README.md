@@ -1,6 +1,6 @@
 # 📁 ContentManagement
 
-A modern web application for managing projects — including creation, updating, deletion, and markdown-based content built with **React**, **Tailwind CSS**, and **Express.js**.
+A modern web application for managing projects including creation, updating, deletion, and markdown-based content built with **React**, **Tailwind CSS**, and **Express.js**.
 
 ---
 
@@ -92,12 +92,5 @@ npm run dev
 ### Deployment
 
 This project is configured for **Vercel** using Vite. Ensure both `client` and `server` are deployed correctly, or adapt to full-stack deployment (e.g., with Railway, Render, or Docker).
-
----
-
-## 👨‍💻 Author
-
-Built by \[Naufal] — contributions welcome!
-GitHub: [github.com/nfahrisalim](https://github.com/nfahrisalim)
 
 ---
